@@ -1,13 +1,11 @@
 window.onload = () => {
     var canvas = document.getElementById("canvas");
     var context = canvas.getContext("2d");
-    let jump = document.getElementById('jump');
     let start = document.getElementById('start');
     let hard = document.getElementById('hard');
     let hardLabel = document.getElementById('hardLabel');
-    jump.style.display = "none";
-    start.style.display = "inline";
     hardLabel.style.display = "inline";
+    start.style.display = "none";
     // w,h campo
     let width = 1500;
     let height = 700;
@@ -31,7 +29,6 @@ window.onload = () => {
     var interval;
     var animation;
     let ob2start = false;
-
     class Obstacle {
         constructor(arg = undefined) {
             if (arg != undefined) {
@@ -171,17 +168,11 @@ window.onload = () => {
     }
 
     // Comandi
-    jump.onmousedown = function () {
-        if (speed>0) speed = 0;
-        speed = hard.checked===false ? -300 : -400
+    document.onkeydown = function (key) {
+        if (key.keyCode===32) {
+            start.onmousedown();
+        }
     }
-    document.onkeydown = function () {
-        if (speed>0) speed = 0;
-        speed = hard.checked===false ? -300 : -400
-    }
-    document.ontouchstart = function () {
-        if (speed>0) speed = 0;
-        speed = hard.checked===false ? -300 : -400    }
     // background
     var bg = new Image();
     bg.src = "./png/background.png";
@@ -196,59 +187,62 @@ window.onload = () => {
     imgdown.src = "./png/imgdown.png";
     // pulsante START
     start.onmousedown = function () {
+        count = 0;
         t = Date.now();
         context.clearRect(0, 0, width, height);
         start.style.display = "none";
         hardLabel.style.display = "none";
-        jump.style.display = "inline";
         x = 150;
         y = 100;
-        speed = 0;
-        ob.speed = hard.checked===false ? 6 : 10;
         ob.x = 1600;
-        ob2.speed = hard.checked===false ? 6 : 10;
+        ob.h = 100 + Math.floor(Math.random() * 400);
+        ob.y2 = ob.h + 180;
+        ob.h2 = height - ob.h;
+        ob.speed =  hard.checked===false ? 6 : 10;
         ob2.x = 1600;
+        ob2.h = 100 + Math.floor(Math.random() * 400);
+        ob2.y2 = ob2.h + 180;
+        ob2.h2 = height - ob2.h;
+        ob2.speed =  hard.checked===false ? 6 : 10;
+        speed = 0;
         playerDeath = false;
+        ob2start = false;
         draw();
         interval = setInterval(frames, 100);
-        /* dopo il primo click tolgo le funzioni draw 
-        e setinterval perche causano bug se ripetute*/
-        start.onmousedown = function () {
-            count = 0;
-            t = Date.now();
-            context.clearRect(0, 0, width, height);
-            start.style.display = "none";
-            hardLabel.style.display = "none";
-            jump.style.display = "inline";
-            x = 150;
-            y = 100;
-            ob.x = 1600;
-            ob.h = 100 + Math.floor(Math.random() * 400);
-            ob.y2 = ob.h + 180;
-            ob.h2 = height - ob.h;
-            ob.speed =  hard.checked===false ? 6 : 10;
-            ob2.x = 1600;
-            ob2.h = 100 + Math.floor(Math.random() * 400);
-            ob2.y2 = ob2.h + 180;
-            ob2.h2 = height - ob2.h;
-            ob2.speed =  hard.checked===false ? 6 : 10;
-            speed = 0;
-            playerDeath = false;
-            ob2start = false;
-            draw();
-            interval = setInterval(frames, 100);
-            // riattivo i comandi che vengono disattivati alla morte
-            document.onkeydown = function () {
-                if (speed>0) speed = 0;
-                speed = hard.checked===false ? -300 : -400
-            }
-            document.ontouchstart = function () {
+        // riattivo i comandi che vengono disattivati alla morte
+        document.onkeydown = function (key) {
+            if (key.keyCode===32 || key.keyCode===87) {
                 if (speed>0) speed = 0;
                 speed = hard.checked===false ? -300 : -400
             }
         }
+        document.ontouchstart = function () {
+            if (speed>0) speed = 0;
+            speed = hard.checked===false ? -300 : -400
+        }
+        
+        
     }
-
+    if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+        // Codice da eseguire nel caso di un dispositivo mobile
+        start.style.display = "inline";
+    }
+    context.beginPath();
+    context.font = 'bold 40px Arial';
+    context.fillStyle = "red";
+    if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+        // Codice da eseguire nel caso di un dispositivo mobile
+        context.fillText("Press start", 650, 300);
+        context.fillText("Tap anywhere to jump", 570, 350);
+        // console.log(navigator.userAgent);
+    }else{
+        // Codice da eseguire nel caso di un dispositivo tradizionale
+        context.fillText("Press space to start game", 495, 300);
+        context.fillText("Press w or space to jump", 500, 350);
+    }
+        
+    
+    
     // DRAW
     function draw() {
         if (playerDeath === false) {
@@ -283,7 +277,7 @@ window.onload = () => {
             bgx -= 100*timePassed;
             if (bgx<-1500) {
                 bgx=1500
-                console.log('resetbg');
+                // console.log('resetbg');
             }
             if (bgx2<-1500) {
                 bgx2=bgx+1500
@@ -294,6 +288,12 @@ window.onload = () => {
             context.drawImage(bg, bgx2, 0, 1510, 710);
             // player
             context.drawImage(img, x - 50, y - 45, 90, 80);
+            // sagoma collisioni
+            // context.beginPath();
+            // context.rect(x - 35, y-35,(x+35)-(x-35), (y+30)-(y-35));
+            // context.arc(x, y, 35, 0, 2 * Math.PI);
+            // context.fillStyle = "red";
+            // context.fill();
 
             // immagini volo/caduta
             // if (speed<150 && speed>-150)
@@ -303,10 +303,6 @@ window.onload = () => {
             // else if (speed<-150)
             //     context.drawImage(imgup, x-50, y-45, 120, 100);
 
-            // sagoma collisioni
-            // context.arc(x, y, 35, 0, 2 * Math.PI);
-            // context.fillStyle = "red";
-            // context.fill();
 
 
             // spostamento ostacolo
@@ -330,32 +326,32 @@ window.onload = () => {
                 }
             }
             // fps
-            context.font = '25px Arial';
+            context.font = 'bold 25px Arial';
             context.fillStyle = 'white';
             context.fillText("Score: " + count, 20, 30);
             context.fillText("FPS: " + fpsSpan, 1350, 30);
             animation = window.requestAnimationFrame(draw);
         } else {
             context.beginPath();
-            context.font = '50px Arial';
+            context.font = 'bold 50px Arial';
             context.fillStyle = "red"
-            context.fillText("Game Over", 700, 300);
-            context.strokeStyle = "red";
-            context.strokeText("Game Over", 700, 300);
-            context.font = '40px Arial';
-            context.fillText("Current Score: "+ count, 700-15, 380);
-            context.fillText("Best Score: " + Math.max.apply(Math, bestscore), 700, 420);
-            context.lineWidth = 2;
-            context.strokeText("Current Score: "+ count, 700-15, 380);
-            context.strokeText("Best Score: " + Math.max.apply(Math, bestscore), 700, 420);
-            context.stroke();
+            context.fillText("Game Over", 650, 300);
+            context.font = 'bold 40px Arial';
+            context.fillText("Current Score: "+ count, 650-15, 380);
+            context.fillText("Best Score: " + Math.max.apply(Math, bestscore), 650, 420);
+            if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+                // Codice da eseguire nel caso di un dispositivo mobile
+                context.fillText("Press restart to retry", 600, 470);
+            }else{
+                // Codice da eseguire nel caso di un dispositivo tradizionale
+                context.fillText("Press space to restart the game", 495, 470);
+            }
         }
     }
     function frames() {
         fpsSpan = fps;
     }
     function death() {
-        console.log(ob.speed, ob2.speed);
         bestscore.push(count);
         ob2start = false;
         clearInterval(interval);
@@ -363,11 +359,17 @@ window.onload = () => {
         playerDeath = true;
         ob.speed = 0;
         ob2.speed = 0;
-        jump.style.display = "none";
-        start.style.display = "inline";
+        if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+            // Codice da eseguire nel caso di un dispositivo mobile
+            start.style.display = "inline";
+        }
         hardLabel.style.display = "inline";
         start.innerHTML = "Restart";
-        document.onkeydown = function () { }
+        document.onkeydown = function (key) { 
+            if (key.keyCode===32) {
+                start.onmousedown();
+            }
+        }
         document.ontouchstart = function () { }
     }
 
