@@ -179,12 +179,6 @@ window.onload = () => {
     // png player
     var img = new Image();
     img.src = "./png/img1.png";
-    // png playerfly
-    var imgup = new Image();
-    imgup.src = "./png/imgup.png";
-    // png playerfall
-    var imgdown = new Image();
-    imgdown.src = "./png/imgdown.png";
     // pulsante START
     start.onmousedown = function () {
         count = 0;
@@ -213,12 +207,12 @@ window.onload = () => {
         document.onkeydown = function (key) {
             if (key.keyCode===32 || key.keyCode===87) {
                 if (speed>0) speed = 0;
-                speed = hard.checked===false ? -300 : -400
+                speed = hard.checked===false ? -330 : -400
             }
         }
         document.ontouchstart = function () {
             if (speed>0) speed = 0;
-            speed = hard.checked===false ? -300 : -400
+            speed = hard.checked===false ? -330 : -400
         }
         
         
@@ -274,7 +268,12 @@ window.onload = () => {
             /*bocco per non permettere al giocatore 
             di uscire dallo schermo saltando*/
             y < 50 ? y = 50 : y
-            bgx -= 100*timePassed;
+            bgx = hard.checked===false
+                ? bgx-100*timePassed
+                : bgx-200*timePassed;
+            bgx2 = hard.checked===false
+                ? bgx2-100*timePassed
+                : bgx2-200*timePassed;
             if (bgx<-1500) {
                 bgx=1500
                 // console.log('resetbg');
@@ -282,26 +281,35 @@ window.onload = () => {
             if (bgx2<-1500) {
                 bgx2=bgx+1500
             }
-            bgx2 -= 100*timePassed;
             context.beginPath();
             context.drawImage(bg, bgx, 0, 1510, 710);
             context.drawImage(bg, bgx2, 0, 1510, 710);
-            // player
-            context.drawImage(img, x - 50, y - 45, 90, 80);
+
+            // salvo il context 
+            context.save();
+            // sposto la sua origine
+            context.translate( x, y);
+            // ruoto il context
+            if (speed>10) {
+                context.rotate(speed/11*Math.PI/180);
+                
+            }else if(speed<-10){
+                context.rotate(speed/6*Math.PI/180);
+
+            }else{
+                context.rotate(0*Math.PI/180);
+            }
+            // disegno il personaggio con il context ruotato
+            context.drawImage(img, 0 - 50, 0 - 45, 90, 80);
+            // reset context
+            context.restore();
             // sagoma collisioni
             // context.beginPath();
-            // context.rect(x - 35, y-35,(x+35)-(x-35), (y+30)-(y-35));
+            // context.rect(x - 30, y-30,(x+30)-(x-30), (y+30)-(y-30));
             // context.arc(x, y, 35, 0, 2 * Math.PI);
             // context.fillStyle = "red";
             // context.fill();
-
-            // immagini volo/caduta
-            // if (speed<150 && speed>-150)
-            //     context.drawImage(img, x-50, y-45, 90, 80);
-            // else if (speed>150)
-            //     context.drawImage(imgdown, x-50, y-45, 120, 100);
-            // else if (speed<-150)
-            //     context.drawImage(imgup, x-50, y-45, 120, 100);
+            
 
 
 
@@ -310,18 +318,18 @@ window.onload = () => {
             // disegno l'ostacolo
             obdraw();
             // collisione con l'ostacolo
-            if (x + 35 >= ob.x-4 && x - 35 <= ob.x + 50 && y - 35 <= ob.h) {
+            if (x + 30 >= ob.x-4 && x - 30 <= ob.x + 40 && y - 30 <= ob.h) {
                 death();
-            } else if (x + 35 >= ob.x-4 && x - 35 <= ob.x + 50 && y + 35 >= ob.y2) {
+            } else if (x + 30 >= ob.x-4 && x - 30 <= ob.x + 40 && y + 30 >= ob.y2) {
                 death();
             }
             if (ob.x < 750) ob2start = true;
             if (ob2start === true) {
                 ob2.x -= ob2.speed
                 ob2draw();
-                if (x + 35 >= ob2.x-4 && x - 35 <= ob2.x + 50 && y - 35 <= ob2.h) {
+                if (x + 30 >= ob2.x-4 && x - 30 <= ob2.x + 50 && y - 30 <= ob2.h) {
                     death();
-                } else if (x + 35 >= ob2.x-4 && x - 35 <= ob2.x + 50 && y + 35 >= ob2.y2) {
+                } else if (x + 30 >= ob2.x-4 && x - 30 <= ob2.x + 50 && y + 30 >= ob2.y2) {
                     death();
                 }
             }
