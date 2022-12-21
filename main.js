@@ -167,7 +167,7 @@ window.onload = () => {
 
     }
 
-    // Comandi
+    // START
     document.onkeydown = function (key) {
         if (key.keyCode===32) {
             start.onmousedown();
@@ -235,7 +235,6 @@ window.onload = () => {
         context.fillText("Press w or space to jump", 500, 350);
     }
         
-    
     
     // DRAW
     function draw() {
