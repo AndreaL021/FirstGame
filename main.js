@@ -29,6 +29,7 @@ window.onload = () => {
     var interval;
     var animation;
     let ob2start = false;
+
     class Obstacle {
         constructor(arg = undefined) {
             if (arg != undefined) {
@@ -192,12 +193,12 @@ window.onload = () => {
         ob.h = 100 + Math.floor(Math.random() * 400);
         ob.y2 = ob.h + 180;
         ob.h2 = height - ob.h;
-        ob.speed =  hard.checked===false ? 6 : 10;
+        ob.speed =  hard.checked===false ? 470 : 700;
         ob2.x = 1600;
         ob2.h = 100 + Math.floor(Math.random() * 400);
         ob2.y2 = ob2.h + 180;
         ob2.h2 = height - ob2.h;
-        ob2.speed =  hard.checked===false ? 6 : 10;
+        ob2.speed =  hard.checked===false ? 470 : 700;
         speed = 0;
         playerDeath = false;
         ob2start = false;
@@ -207,12 +208,12 @@ window.onload = () => {
         document.onkeydown = function (key) {
             if (key.keyCode===32 || key.keyCode===87) {
                 if (speed>0) speed = 0;
-                speed = hard.checked===false ? -330 : -400
+                speed = -400
             }
         }
         document.ontouchstart = function () {
             if (speed>0) speed = 0;
-            speed = hard.checked===false ? -330 : -400
+            speed = -400
         }
         
         
@@ -248,7 +249,7 @@ window.onload = () => {
             if (y <= height) {
                 if (speed <= 600) {
                     speed = hard.checked===false 
-                    ? speed + 500 * timePassed 
+                    ? speed + 600 * timePassed 
                     : speed + 500 * timePassed * 1.5;
                     y = hard.checked===false 
                     ? y + speed * timePassed
@@ -313,24 +314,41 @@ window.onload = () => {
 
 
             // spostamento ostacolo
-            ob.x -= ob.speed
+            ob.x -= ob.speed*timePassed;
             // disegno l'ostacolo
             obdraw();
+            // calcola la distanza tra il centro del cerchio e i bordi del quadrato
+            let dx = Math.max(ob.x-10 - x, 0, x - (ob.x + ob.w));
+            let dy = Math.max(ob.y - y, 0, y - (ob.y + ob.h));
+            let dy2 = Math.max(ob.y2 - y, 0, y - (ob.y2 + ob.h));
             // collisione con l'ostacolo
-            if (x + 30 >= ob.x-4 && x - 30 <= ob.x + 40 && y - 30 <= ob.h) {
-                death();
-            } else if (x + 30 >= ob.x-4 && x - 30 <= ob.x + 40 && y + 30 >= ob.y2) {
+            // cerchio
+            if (dx * dx + dy * dy <= 35 * 35 || dx * dx + dy2 * dy2 <= 35 * 35) {
                 death();
             }
+            // quadrato
+            // if (x + 30 >= ob.x-4 && x - 30 <= ob.x + 40 && y - 30 <= ob.h) {
+            //     death();
+            // } else if (x + 30 >= ob.x-4 && x - 30 <= ob.x + 40 && y + 30 >= ob.y2) {
+            //     death();
+            // }
             if (ob.x < 750) ob2start = true;
             if (ob2start === true) {
-                ob2.x -= ob2.speed
+                ob2.x -= ob2.speed*timePassed
                 ob2draw();
-                if (x + 30 >= ob2.x-4 && x - 30 <= ob2.x + 50 && y - 30 <= ob2.h) {
-                    death();
-                } else if (x + 30 >= ob2.x-4 && x - 30 <= ob2.x + 50 && y + 30 >= ob2.y2) {
+                // calcola la distanza tra il centro del cerchio e i bordi del quadrato
+                let dx = Math.max(ob2.x-4 - x, 0, x - (ob2.x + ob.w));
+                let dy = Math.max(ob2.y - y, 0, y - (ob2.y + ob2.h));
+                let dy2 = Math.max(ob2.y2 - y, 0, y - (ob2.y2 + ob2.h));
+                // collisione con l'ostacolo
+                if (dx * dx + dy * dy <= 35 * 35 || dx * dx + dy2 * dy2 <= 35 * 35) {
                     death();
                 }
+                // if (x + 30 >= ob2.x-4 && x - 30 <= ob2.x + 50 && y - 30 <= ob2.h) {
+                //     death();
+                // } else if (x + 30 >= ob2.x-4 && x - 30 <= ob2.x + 50 && y + 30 >= ob2.y2) {
+                //     death();
+                // }
             }
             // fps
             context.font = 'bold 25px Arial';
