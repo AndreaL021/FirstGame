@@ -155,17 +155,6 @@ window.onload = () => {
         context.fillStyle = "green";
         context.fill();
         context.stroke();
-
-        // context.rect(ob.x+2, ob.y2+30, ob.w-4, ob.h2);
-        // context.lineWidth = 4;
-        // context.fillStyle = "green";
-        // context.fill();
-        // context.stroke();
-        // context.beginPath();
-        // context.lineWidth = 4;
-        // context.rect(ob.x-2, ob.y2, ob.w+4, 30);
-
-
     }
 
     // START
@@ -303,16 +292,6 @@ window.onload = () => {
             context.drawImage(img, 0 - 50, 0 - 45, 90, 80);
             // reset context
             context.restore();
-            // sagoma collisioni
-            // context.beginPath();
-            // context.rect(x - 30, y-30,(x+30)-(x-30), (y+30)-(y-30));
-            // context.arc(x, y, 35, 0, 2 * Math.PI);
-            // context.fillStyle = "red";
-            // context.fill();
-            
-
-
-
             // spostamento ostacolo
             ob.x -= ob.speed*timePassed;
             // disegno l'ostacolo
@@ -326,12 +305,6 @@ window.onload = () => {
             if (dx * dx + dy * dy <= 35 * 35 || dx * dx + dy2 * dy2 <= 35 * 35) {
                 death();
             }
-            // quadrato
-            // if (x + 30 >= ob.x-4 && x - 30 <= ob.x + 40 && y - 30 <= ob.h) {
-            //     death();
-            // } else if (x + 30 >= ob.x-4 && x - 30 <= ob.x + 40 && y + 30 >= ob.y2) {
-            //     death();
-            // }
             if (ob.x < 750) ob2start = true;
             if (ob2start === true) {
                 ob2.x -= ob2.speed*timePassed
@@ -344,11 +317,6 @@ window.onload = () => {
                 if (dx * dx + dy * dy <= 35 * 35 || dx * dx + dy2 * dy2 <= 35 * 35) {
                     death();
                 }
-                // if (x + 30 >= ob2.x-4 && x - 30 <= ob2.x + 50 && y - 30 <= ob2.h) {
-                //     death();
-                // } else if (x + 30 >= ob2.x-4 && x - 30 <= ob2.x + 50 && y + 30 >= ob2.y2) {
-                //     death();
-                // }
             }
             // fps
             context.font = 'bold 25px Arial';
