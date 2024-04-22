@@ -4,7 +4,10 @@ body {
 
 a{
     color: white;
-    text-decoration: none;
+    text-decoration: none !important;
+}
+a:hover{
+    color: gold;
 }
 
 h1 {
